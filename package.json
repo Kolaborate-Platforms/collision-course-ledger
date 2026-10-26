@@ -1,0 +1,19 @@
+{
+  "name": "collision-course-ledger",
+  "version": "1.0.0",
+  "description": "Practice codebase and backlog for the Kola Academy hackathon Collision Course",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node scripts/run-suite.js test",
+    "acceptance": "node scripts/run-suite.js acceptance",
+    "grade": "node scripts/grade.js",
+    "verify:tests": "node scripts/test-lock.js"
+  },
+  "dependencies": {}
+}

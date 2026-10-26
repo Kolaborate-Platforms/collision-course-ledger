@@ -1,0 +1,4 @@
+node_modules/
+grade-report.json
+.env
+.DS_Store

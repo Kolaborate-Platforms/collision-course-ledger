@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "T01",
+      "title": "Percentage fees round the wrong way",
+      "body": "Finance reconciliation shows we are short on percentage fees. They are always rounded down, but the policy is to round half up to the nearest whole shilling: 1,500.5 becomes 1,501 and 1,500.49 stays 1,500.\n\nA fee quoted to a customer and the fee actually charged for the same amount must always match."
+    },
+    {
+      "id": "T02",
+      "title": "Add cash-out",
+      "body": "Customers need to withdraw cash at an agent. Add POST /cashouts with body { \"account\": string, \"amount\": integer }. On success respond 201 with { \"fee\": integer, \"account\": { \"id\": string, \"balance\": integer } }.\n\nThe customer is debited the amount plus the fee. The amount is credited to SYSTEM_FLOAT and the fee to SYSTEM_FEES, all in one balanced ledger entry of kind \"cashout\".\n\nCash-out fee schedule: amounts up to 10,000 pay 300 flat; up to 100,000 pay 900 flat; up to 1,000,000 pay 1.2%; up to 5,000,000 pay 1%. POST /fees/quote must accept type \"cashout\" and answer from the same schedule.\n\nNot enough balance returns 422 INSUFFICIENT_FUNDS and changes nothing. An unknown account returns 404 ACCOUNT_NOT_FOUND. The usual amount rules apply."
+    },
+    {
+      "id": "T03",
+      "title": "Add cash-in",
+      "body": "Agents need to put cash into a customer's wallet. Add POST /cashins with body { \"account\": string, \"amount\": integer }. On success respond 201 with { \"fee\": 0, \"account\": { \"id\": string, \"balance\": integer } }.\n\nCash-in is always free for the customer. The money comes out of SYSTEM_FLOAT and into the wallet in one balanced ledger entry of kind \"cashin\", with no fee line. POST /fees/quote must accept type \"cashin\" and return a fee of 0.\n\nAn unknown account returns 404 ACCOUNT_NOT_FOUND. The usual amount rules apply."
+    },
+    {
+      "id": "T04",
+      "title": "Give every transfer an id",
+      "body": "Support cannot point at a specific transfer today. The POST /transfers response must include an id: a string made of the prefix \"tr_\" followed by digits, unique for every transfer.\n\nAdd GET /transfers/:id returning { id, from, to, amount, fee, status, at }, where status is \"completed\" and at is the ISO timestamp from the store clock when the transfer was made. An unknown id returns 404 TRANSFER_NOT_FOUND."
+    },
+    {
+      "id": "T05",
+      "title": "KYC tiers on accounts",
+      "body": "Compliance needs a KYC tier on every account: \"tier1\", \"tier2\" or \"tier3\". POST /accounts takes an optional tier and defaults to \"tier1\". Any other value, null included, returns 400 INVALID_TIER.\n\nGET /accounts/:id and the POST /accounts response include tier. Add PATCH /accounts/:id with body { \"tier\": string } that changes the tier and returns the account in the same shape as GET. A missing or invalid tier returns 400 INVALID_TIER. An unknown account returns 404 ACCOUNT_NOT_FOUND."
+    },
+    {
+      "id": "T06",
+      "title": "Idempotency keys on POST /transfers",
+      "body": "Shipped in PR #112 last sprint and signed off by QA on staging, so there is nothing left to build. Please confirm it is in place and close the ticket.\n\nBehaviour as documented to partners: a request carrying an Idempotency-Key header is executed once. A repeat with the same key and the same body returns the original status and body and moves no money. Reusing a key with a different body returns 409 IDEMPOTENCY_KEY_REUSED. Requests without the header behave as before."
+    },
+    {
+      "id": "T07",
+      "title": "Make micro-transfers free",
+      "body": "Financial inclusion commitment from the board: any send of 1,000 shillings or less is free. The fee is 0 for those amounts in the transfer itself, in the ledger entry (no fee line at all) and in POST /fees/quote.\n\nSends above 1,000 are charged as they are today."
+    },
+    {
+      "id": "T08",
+      "title": "Statements: newest first and paged",
+      "body": "GET /accounts/:id/statement returns the whole history, oldest first, and it times out for busy wallets. Return it newest first and page it.\n\nAccept a limit query parameter (default 20, maximum 100) and a before query parameter (an entry seq; only entries with a lower seq are returned). A limit that is not a whole number from 1 to 100, or a before that is not a positive whole number, returns 400 INVALID_QUERY. An empty value is not a number.\n\nThe response becomes { entries, nextBefore }. nextBefore is the seq of the last entry returned when older entries remain, otherwise null. The entry shape does not change."
+    },
+    {
+      "id": "T09",
+      "title": "Daily send limits",
+      "body": "Compliance policy CP-7: enforce the daily send limits in docs/limits.md.\n\nThe daily total for an account is the sum of the amount (not the fees) of its sends on the current UTC day, using the store clock. A send that would take the total over the limit returns 422 DAILY_LIMIT_EXCEEDED and changes nothing. A send that lands exactly on the limit is allowed, and sends that were rejected do not count. The total resets at 00:00 UTC."
+    },
+    {
+      "id": "T10",
+      "title": "Let support reverse a transfer",
+      "body": "Support needs to undo mistaken transfers. Add POST /transfers/:id/reverse with no body. It moves the transfer amount back from the receiver to the sender in one balanced ledger entry of kind \"reversal\". The fee is not refunded. Respond 200 with { \"id\": string, \"status\": \"reversed\" }.\n\nA transfer can be reversed once; a second attempt returns 409 ALREADY_REVERSED. If the receiver no longer has the amount, return 422 INSUFFICIENT_FUNDS and change nothing. An unknown id returns 404 TRANSFER_NOT_FOUND."
+    },
+    {
+      "id": "T11",
+      "title": "Minimum send fee of 200",
+      "body": "SMS costs went up and we lose money on small sends. Every send must now carry a fee of at least 200 shillings, no exceptions. Any send fee below 200 is raised to 200, in the transfer and in POST /fees/quote. Fees that are already 200 or more stay as they are."
+    },
+    {
+      "id": "T12",
+      "title": "Excise duty on cash-outs",
+      "body": "The tax authority charges 0.5% excise duty on withdrawals. For a cash-out the duty is 0.5% of the cash-out amount (not of the fee), rounded half up to the nearest whole shilling. The customer pays it on top of the amount and the fee, and it is credited to a SYSTEM_TAX account in the same ledger entry as the rest of the cash-out.\n\nThe POST /cashouts response and the POST /fees/quote response for type \"cashout\" gain a duty field. The balance check must include the duty. Sends and cash-ins carry no duty. SYSTEM_TAX can be read with GET /accounts/SYSTEM_TAX like the other system accounts."
+    }
+  ]
+}
