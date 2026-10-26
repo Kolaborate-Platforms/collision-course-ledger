@@ -85,13 +85,13 @@ These are the rules from the hackathon page.
 2. Build your own harness. Agent HQ (code, binaries, MCP gateway) and prebuilt multi-agent orchestration frameworks are not allowed.
 3. Allowed: model APIs and SDKs, MCP libraries, and single-agent command line tools used as workers.
 4. Your repository must be open, list its dependencies, and run with one command. Judges check the dependency list against the banned list.
-5. Your harness must enforce a hard budget cap during the live run. The cap is announced at kickoff.
+5. Your harness must enforce a hard budget cap during the live run. The cap is USD 5 per entrant.
 6. Run at least 3 agents across at least 2 different tools or models.
 7. Hidden tests are rerun by the organizers. Claims of "done" that fail the tests count against honesty.
 8. Scoring: hidden tests 40%, collision efficiency 20%, cost against cap 15%, honesty of "done" claims 15%, process evidence 10%.
 9. Disqualification for using banned tools, tampering with tests, or sharing the hidden backlog.
 
-The budget cap is set by the organizers and announced to entrants. Make it a setting in your harness, not a constant, so you can change it for the live run.
+The cap is USD 5 per entrant in model spend during the live run, and the organizers check your logged spend against it. Make it a setting in your harness, not a constant, in case the organizers change it.
 
 ## Submitting
 
