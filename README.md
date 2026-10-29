@@ -4,7 +4,7 @@ The codebase and practice backlog for [Collision Course: Build Your Own Agent Ha
 
 Running one coding agent is easy. Running three at once on the same codebase is where things break. Your job is to build the harness that stops that: the coordination code that gives each agent a task, keeps agents out of each other's way, tracks what is really finished, and stays inside a budget. This repository is the work your harness gets pointed at.
 
-This repository holds the **practice backlog**. The live run on Thursday 29 October uses a hidden variant of the backlog, so do not tune your harness to these twelve tasks. Tune it to the kind of problem they represent.
+This repository holds the **practice backlog**. The challenge run uses a hidden variant of the backlog, which the organizers email privately to entrants at 15:00 EAT on Thursday 29 October, so do not tune your harness to these twelve tasks. Tune it to the kind of problem they represent.
 
 ## What is in here
 
@@ -54,7 +54,7 @@ npm start           # run the API on http://localhost:3000 (set PORT to change i
 - `id` is unique and names the acceptance file: task `T01` is checked by `acceptance/T01.test.js`.
 - `title` and `body` are free text. The body is the whole specification. There are no other fields, so there is no dependency list and no file list. Working out what a ticket touches, and what it needs first, is part of the exercise.
 
-Build against this format. If the organizers change anything for the live run, they will tell entrants.
+Build against this format. If the organizers change anything for the challenge run, they will tell entrants.
 
 As the hackathon page says, the backlog is deliberately tricky. Tasks can overlap in the files they touch, depend on each other without saying so, contradict each other, or sound finished when they are not. The grader only reports pass or fail per task. What to do about the rest is your harness's job, and how honestly it reports on it is part of your score.
 
@@ -85,17 +85,17 @@ These are the rules from the hackathon page.
 2. Build your own harness. Agent HQ (code, binaries, MCP gateway) and prebuilt multi-agent orchestration frameworks are not allowed.
 3. Allowed: model APIs and SDKs, MCP libraries, and single-agent command line tools used as workers.
 4. Your repository must be open, list its dependencies, and run with one command. Judges check the dependency list against the banned list.
-5. Your harness must enforce a hard budget cap during the live run. The cap is USD 5 per entrant.
+5. Your harness must enforce a hard budget cap during the challenge run. The cap is USD 5 per entrant.
 6. Run at least 3 agents across at least 2 different tools or models.
 7. Hidden tests are rerun by the organizers. Claims of "done" that fail the tests count against honesty.
 8. Scoring: hidden tests 40%, collision efficiency 20%, cost against cap 15%, honesty of "done" claims 15%, process evidence 10%.
 9. Disqualification for using banned tools, tampering with tests, or sharing the hidden backlog.
 
-The cap is USD 5 per entrant in model spend during the live run, and the organizers check your logged spend against it. Make it a setting in your harness, not a constant, in case the organizers change it.
+The cap is USD 5 per entrant in model spend during the challenge run, and the organizers check your logged spend against it. Make it a setting in your harness, not a constant, in case the organizers change it.
 
 ## Submitting
 
-Submit your repository link, the full logs from your live run, and a one-page write-up covering what your harness does, what it got wrong, and what you would fix next. Submissions close at 23:59 EAT on Thursday 29 October. Questions go to academy@kolaborate.co.
+Submit your repository link, the full logs from your run, with timestamps and model spend, and a one-page write-up covering what your harness does, what it got wrong, and what you would fix next. Submissions close at 09:00 EAT on Friday 30 October. Questions go to academy@kolaborate.co.
 
 ## Notes
 
